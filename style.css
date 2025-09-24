@@ -1,17 +1,114 @@
+/* === Elevador Avto style.css === */
+
+/* Общие стили */
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  background: #f7f9fc;
+  color: #333;
+  line-height: 1.5;
 }
 
-.order {
-  border: 1px solid #ddd;
+/* Шапка */
+header {
+  background: linear-gradient(90deg, #0d47a1, #1976d2);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Контейнер */
+.container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Кнопки */
+button {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #0d47a1;
+}
+
+/* Форма */
+form {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+form input, form textarea {
   padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
 }
 
-.order img {
+form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Карточки заявок */
+.order {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #fafafa;
+  transition: box-shadow 0.2s ease;
+}
+
+.order:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.order h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #1976d2;
+}
+
+.order .meta {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+/* Ответы */
+.reply {
+  border-left: 3px solid #1976d2;
+  padding-left: 10px;
+  margin: 8px 0;
+  font-size: 0.95rem;
+}
+
+.reply img {
+  max-width: 200px;
   display: block;
-  margin-top: 5px;
-  border: 1px solid #ccc;
+  margin-top: 6px;
+  border-radius: 6px;
 }
