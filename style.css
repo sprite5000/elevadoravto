@@ -107,8 +107,53 @@ form textarea {
 }
 
 .reply img {
-  max-width: 200px;
+  max-width: 100%;
   display: block;
   margin-top: 6px;
   border-radius: 6px;
+}
+
+/* === АДАПТИВ === */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .container {
+    margin: 15px;
+    padding: 15px;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .order {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 15px;
+  }
+
+  header {
+    padding: 15px;
+  }
+
+  .container {
+    margin: 10px;
+    padding: 12px;
+  }
+
+  form input, form textarea {
+    font-size: 15px;
+  }
+
+  .order h3 {
+    font-size: 1rem;
+  }
 }
