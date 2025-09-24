@@ -1,5 +1,5 @@
-const API_URL = "https://your-worker.yourname.workers.dev/api"; // замени на URL воркера
-const AUTH = "Basic " + btoa("username:password"); // замени на свои логин:пароль
+const API_URL = "https://orders-api.supbot777.workers.dev/api"; // замени на URL воркера
+const AUTH = "Basic " + btoa("admin:1234");
 
 async function api(path, options = {}) {
   const res = await fetch(API_URL + path, {
