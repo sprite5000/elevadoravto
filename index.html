@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Elevador Avto</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Elevador Avto</h1>
+
+  <section id="new-order">
+    <h2>Add Order</h2>
+    <form id="orderForm">
+      <input name="brand" placeholder="Brand" required />
+      <input name="year" type="number" placeholder="Year" required />
+      <input name="mileage" type="number" placeholder="Mileage" required />
+      <textarea name="description" placeholder="Description"></textarea>
+      <button type="submit">Add</button>
+    </form>
+  </section>
+
+  <section id="orders">
+    <h2>Orders</h2>
+    <div id="ordersList"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
