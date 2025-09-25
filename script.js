@@ -39,7 +39,8 @@ async function loadOrders() {
     div.className = `order ${statusClass}`;
 
     div.innerHTML = `
-      <h3>${order.brand} (${order.year}) — ${order.mileage} km</h3>
+      <button class="order__delete" title="Delete order" aria-label="Delete order">×</button>
+      <h3>#${order.id} ${order.brand} (${order.year}) — ${order.mileage} km</h3>
       <p>${order.description}</p>
 
       <label>
@@ -50,19 +51,17 @@ async function loadOrders() {
         </select>
       </label>
 
-      <button class="deleteBtn" data-id="${order.id}">Delete order</button>
-
       <h4>Replies:</h4>
       ${order.replies.map(r => `
         <div class="reply" data-reply-id="${r.id}">
           <button class="reply__delete" title="Delete reply" aria-label="Delete reply">×</button>
           <p>${r.description} — $${r.price}</p>
           ${r.images && r.images.length ? `
-            <div class="carousel" aria-label="Images">
+            <div class="carousel" aria-label="Images" data-reply-id="${r.id}">
               ${r.images.map(img => {
                 const src = (img.url || "");
                 const abs = src.startsWith("http") ? src : (API_ORIGIN + src);
-                return `<img src="${abs}" alt="reply image" class="carousel__img" />`;
+                return `<img src="${abs}" alt="reply image" class="carousel__img" data-src="${abs}" />`;
               }).join("")}
             </div>
           ` : ""}
@@ -70,7 +69,7 @@ async function loadOrders() {
       `).join("")}
 
       <form class="replyForm" data-id="${order.id}">
-        <input name="description" placeholder="Reply description" required />
+        <textarea name="description" placeholder="Reply description" rows="4" required></textarea>
         <input name="price" type="number" placeholder="Price" required />
         <input name="images" type="file" accept="image/*" multiple />
         <button type="submit">Reply</button>
@@ -93,10 +92,13 @@ async function loadOrders() {
     });
   });
 
-  // Обработчики удаления
-  document.querySelectorAll(".deleteBtn").forEach(btn => {
+  // Обработчики удаления заказа
+  document.querySelectorAll(".order__delete").forEach(btn => {
     btn.addEventListener("click", async e => {
-      const orderId = e.target.dataset.id;
+      const wrapper = e.target.closest('.order');
+      // orderId хранится в DOM только внутри select и форм; возьмём из select
+      const select = wrapper.querySelector('.statusSelect');
+      const orderId = select ? select.dataset.id : null;
       if (!confirm("Delete this order?")) return;
       const pwd = prompt("Enter delete password:");
       if (pwd === null) return;
@@ -141,6 +143,53 @@ async function loadOrders() {
       await api(`/orders/${orderId}/replies`, { method: "POST", body: fd });
       loadOrders();
     });
+  });
+
+  // Lightbox handlers
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = lightbox.querySelector('.lightbox__img');
+  const lbClose = lightbox.querySelector('.lightbox__close');
+  const lbPrev = lightbox.querySelector('.lightbox__prev');
+  const lbNext = lightbox.querySelector('.lightbox__next');
+
+  let gallery = [];
+  let index = 0;
+
+  function openLightbox(images, startIdx) {
+    gallery = images;
+    index = startIdx;
+    lbImg.src = gallery[index];
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('is-open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lbImg.src = '';
+  }
+  function show(delta) {
+    if (!gallery.length) return;
+    index = (index + delta + gallery.length) % gallery.length;
+    lbImg.src = gallery[index];
+  }
+
+  document.querySelectorAll('.carousel').forEach(carousel => {
+    const imgs = Array.from(carousel.querySelectorAll('.carousel__img'));
+    const urls = imgs.map(img => img.dataset.src || img.src);
+    imgs.forEach((img, i) => {
+      img.addEventListener('click', () => openLightbox(urls, i));
+    });
+  });
+
+  lbClose.addEventListener('click', closeLightbox);
+  lbPrev.addEventListener('click', () => show(-1));
+  lbNext.addEventListener('click', () => show(1));
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+  window.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('is-open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') show(-1);
+    if (e.key === 'ArrowRight') show(1);
   });
 }
 
