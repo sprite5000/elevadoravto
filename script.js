@@ -68,12 +68,7 @@ async function loadOrders() {
         </div>
       `).join("")}
 
-      <form class="replyForm" data-id="${order.id}">
-        <textarea name="description" placeholder="Reply description" rows="4" required></textarea>
-        <input name="price" type="number" placeholder="Price" required />
-        <input name="images" type="file" accept="image/*" multiple />
-        <button type="submit">Reply</button>
-      </form>
+      <button class="addReplyBtn" data-id="${order.id}">Add reply</button>
     `;
 
     container.appendChild(div);
@@ -130,18 +125,11 @@ async function loadOrders() {
     });
   });
 
-  // Обработчики форм ответа
-  document.querySelectorAll(".replyForm").forEach(form => {
-    form.addEventListener("submit", async e => {
-      e.preventDefault();
-      const orderId = form.dataset.id;
-      const fd = new FormData();
-      fd.append("description", form.description.value);
-      fd.append("price", form.price.value);
-      const files = form.images && form.images.files ? Array.from(form.images.files) : [];
-      files.slice(0, 9).forEach(file => fd.append("images", file));
-      await api(`/orders/${orderId}/replies`, { method: "POST", body: fd });
-      loadOrders();
+  // Обработчики кнопок "Add reply"
+  document.querySelectorAll(".addReplyBtn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      const orderId = e.target.dataset.id;
+      openReplyModal(orderId);
     });
   });
 
@@ -190,6 +178,49 @@ async function loadOrders() {
     if (e.key === 'Escape') closeLightbox();
     if (e.key === 'ArrowLeft') show(-1);
     if (e.key === 'ArrowRight') show(1);
+  });
+
+  // Reply modal functions
+  function openReplyModal(orderId) {
+    const modal = document.getElementById('replyModal');
+    const form = modal.querySelector('.replyForm');
+    form.dataset.id = orderId;
+    form.reset();
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeReplyModal() {
+    const modal = document.getElementById('replyModal');
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  // Reply modal handlers
+  const replyModal = document.getElementById('replyModal');
+  const replyForm = replyModal.querySelector('.replyForm');
+  const replyClose = replyModal.querySelector('.replyModal__close');
+
+  replyClose.addEventListener('click', closeReplyModal);
+  replyModal.addEventListener('click', e => { if (e.target === replyModal) closeReplyModal(); });
+
+  replyForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const orderId = replyForm.dataset.id;
+    const fd = new FormData();
+    fd.append("description", replyForm.description.value);
+    fd.append("price", replyForm.price.value);
+    const files = replyForm.images && replyForm.images.files ? Array.from(replyForm.images.files) : [];
+    files.slice(0, 9).forEach(file => fd.append("images", file));
+    await api(`/orders/${orderId}/replies`, { method: "POST", body: fd });
+    closeReplyModal();
+    loadOrders();
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && replyModal.classList.contains('is-open')) {
+      closeReplyModal();
+    }
   });
 }
 
