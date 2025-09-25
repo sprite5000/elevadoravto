@@ -43,6 +43,12 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Layout helpers */
+* {
+  box-sizing: border-box;
 }
 
 h1, h2, h3 {
@@ -61,10 +67,10 @@ a:hover {
 
 /* Контейнер */
 .container {
-  width: 95%;
+  width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px 20px;
 }
 
 /* Карточка заявки */
@@ -73,7 +79,7 @@ a:hover {
   border: 1px solid #a855f7; /* фиолетовая обводка */
   border-radius: 12px;
   padding: 20px;
-  margin-bottom: 20px;
+  margin: 0 8px 20px;
   box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
@@ -81,6 +87,16 @@ a:hover {
 .order:hover {
   transform: translateY(-4px);
   box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+/* Status indicator: left stripe only (keeps purple border and dark background) */
+.order.order--waiting {
+  border-left-width: 6px;
+  border-left-color: #facc15; /* amber-400 */
+}
+.order.order--done {
+  border-left-width: 6px;
+  border-left-color: #10b981; /* emerald-500 */
 }
 
 /* Формы */
@@ -124,31 +140,105 @@ button:hover {
 }
 
 /* Список ответов */
-.order ul {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0;
-}
-
-.order ul li {
+.reply {
   background: #1a1a1a;
   border-left: 3px solid #a855f7;
   padding: 8px 12px;
   margin-bottom: 8px;
   border-radius: 6px;
+  position: relative;
+}
+
+/* Prevent long reply text from overflowing */
+.reply p {
+  white-space: pre-wrap; /* keep user line breaks */
+  overflow-wrap: anywhere; /* break long words/URLs if needed */
+  word-break: break-word;
+}
+
+/* Simple horizontal carousel */
+.carousel {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.carousel__img {
+  height: 120px;
+  width: auto;
+  border-radius: 6px;
+  flex: 0 0 auto;
+}
+
+.reply__delete {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+  cursor: pointer;
+  line-height: 20px;
+  text-align: center;
+  padding: 0;
+}
+
+.reply__delete:hover {
+  background: #a855f7;
+}
+
+@media (max-width: 768px) {
+  .carousel__img {
+    height: 100px;
+  }
+}
+
+/* Make hit areas larger on touch */
+.statusSelect,
+.deleteBtn,
+.replyForm button {
+  min-height: 44px;
 }
 
 /* Адаптив */
 @media (max-width: 768px) {
   .container {
-    padding: 10px;
+    padding: 0 16px 16px;
   }
 
   .order {
-    padding: 15px;
+    padding: 16px;
+    margin: 0 6px 16px;
   }
 
-  input, select, textarea, button {
-    font-size: 16px;
+  /* Larger base font for readability */
+  body {
+    font-size: 18px;
+  }
+
+  input, select, textarea {
+    font-size: 18px;
+    padding: 14px 14px;
+  }
+
+  button {
+    font-size: 18px;
+    padding: 14px 20px;
+  }
+
+  .site-header h1 {
+    font-size: 22px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
   }
 }
