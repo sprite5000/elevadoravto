@@ -1,3 +1,40 @@
+/* Шапка */
+.site-header {
+  background: #000;
+  border-bottom: 2px solid #a855f7; /* фиолетовая линия */
+  padding: 12px 20px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.site-header h1 {
+  font-size: 24px;
+  color: #fff;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Адаптив для мобил */
+@media (max-width: 768px) {
+  .logo-container {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .site-header h1 {
+    font-size: 20px;
+  }
+}
 /* Общий стиль */
 body {
   font-family: 'Montserrat', sans-serif;
