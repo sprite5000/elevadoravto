@@ -1,125 +1,260 @@
-/* ===== Общий стиль ===== */
-body {
-  margin: 0;
-  font-family: "Montserrat", Arial, sans-serif;
-  background: #000;
+/* ===== Elevador Avto — responsive theme (black + silver + purple accents) ===== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+* { box-sizing: border-box; }
+
+:root{
+  --bg:#000;
+  --card:#0f0f10;
+  --muted:#cfcfe0;
+  --accent:#6c2dc7; /* фиолетовый акцент */
+  --silver-start: #d6d6d6;
+  --silver-end: #a9a9a9;
+}
+
+html,body{
+  height:100%;
+  margin:0;
+  padding:0;
+  background: var(--bg);
   color: #fff;
+  font-family: 'Montserrat', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-size: 16px; /* базовый размер (потом увеличиваем на телефоне) */
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ===== Контейнер (центрирование содержимого) ===== */
+.container {
+  width: 95%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 18px 12px 40px;
 }
 
 /* ===== Шапка ===== */
-header {
-  background: #111;
-  padding: 15px 20px;
-  text-align: center;
-  border-bottom: 2px solid #6c2dc7; /* фиолетовый акцент */
+.site-header {
+  background: transparent;
+  border-bottom: 2px solid rgba(108,45,199,0.18);
+  padding: 14px 0;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
+.logo-container {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  max-width:1240px;
+  margin:0 auto;
+  padding: 0 12px;
+}
+
+.logo {
+  height: 44px;            /* уменьшил — не будет гигантским */
+  width: auto;
+  display:block;
+  image-rendering: optimizeQuality;
+}
+
+.site-title {
+  font-size: 1.25rem;
   color: #fff;
-  letter-spacing: 2px;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
-/* ===== Контейнер заявок ===== */
+/* ===== Сетка заявок ===== */
 #ordersList {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: 1fr;       /* мобильная — 1 колонка */
+  gap: 22px;
+  margin-top: 20px;
 }
 
 /* ===== Карточка заявки ===== */
 .order {
-  background: #111;
-  border: 2px solid #6c2dc7; /* фиолетовая рамка */
+  background: var(--card);
   border-radius: 12px;
-  padding: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.order:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 12px rgba(108, 45, 199, 0.6);
-}
-
-.order h3 {
-  margin-top: 0;
-  font-size: 1.3rem;
-  color: #fff;
-}
-
-.order p {
-  color: #ccc;
-  margin: 6px 0;
-}
-
-.order h4 {
-  margin-top: 15px;
-  font-size: 1.1rem;
-  color: #aaa;
-}
-
-.order img {
-  display: block;
-  margin-top: 10px;
-  border-radius: 8px;
-  max-width: 100%;
-}
-
-/* ===== Формы ===== */
-form {
-  margin-top: 15px;
+  padding: 18px;
+  border: 1.5px solid rgba(108,45,199,0.95); /* фиолетовая обводка */
+  box-shadow: 0 6px 18px rgba(108,45,199,0.06);
+  transition: transform .18s ease, box-shadow .18s ease;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 120px;
 }
 
-input, select, textarea {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background: #222;
-  color: #fff;
+.order:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 12px 36px rgba(108,45,199,0.14);
+}
+
+/* заголовок заявки */
+.order h3 {
+  margin:0;
+  font-size: 1.12rem;
+  color: #ffffff;
+  line-height: 1.15;
+}
+
+/* мета-инфо */
+.meta-row {
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* описание */
+.order p {
+  margin: 0;
+  color: #d5d5d5;
+  font-size: 0.98rem;
+}
+
+/* ответы */
+.replies-list {
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.replies-list li {
+  background:#121212;
+  border-left: 3px solid var(--accent);
+  padding:8px 10px;
+  border-radius:6px;
+  color:#ddd;
+  font-size:0.95rem;
+}
+
+/* изображения в ответе */
+.order img {
+  max-width:100%;
+  height:auto;
+  border-radius:8px;
+  margin-top:8px;
+  display:block;
+}
+
+/* ===== Формы в карточке ===== */
+.order form {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:6px;
+}
+
+.order input[type="text"],
+.order input[type="number"],
+.order textarea,
+.order input[type="url"],
+.order select {
+  background:#151515;
+  border:1px solid #2a2a2a;
+  color:#fff;
+  padding:10px;
+  border-radius:8px;
   font-size: 1rem;
 }
 
-textarea {
-  resize: vertical;
-}
-
-button {
-  background: #c0c0c0; /* серебро */
-  color: #000;
+/* кнопки: серебристые, но при hover — фиолетовые */
+.btn {
+  appearance:none;
+  -webkit-appearance:none;
   border: none;
-  border-radius: 6px;
-  padding: 10px 15px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight:700;
+  cursor:pointer;
+  background: linear-gradient(160deg, var(--silver-start), var(--silver-end));
+  color:#000;
+  transition: all .18s ease;
 }
 
-button:hover {
-  background: #d9d9d9;
+.btn:hover {
+  background: linear-gradient(160deg, rgba(108,45,199,1), rgba(124,58,237,1));
+  color:#fff;
   transform: translateY(-2px);
 }
 
-button:active {
-  transform: translateY(1px);
+/* спец-кнопки: удалить (красная) */
+.btn-danger {
+  background: linear-gradient(160deg, #e04b4b, #bf2b2b);
+  color:#fff;
 }
 
-/* ===== Адаптивность ===== */
+.controls-row {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+/* статус селект */
+.select-status {
+  background:#151515;
+  color:#fff;
+  border:1px solid #2a2a2a;
+  padding:8px 10px;
+  border-radius:8px;
+  font-weight:600;
+}
+
+/* ===== Футер-паддинг (чтобы контент не прилипал к низу) ===== */
+.site-footer {
+  height:40px;
+  margin-top: 28px;
+}
+
+/* ===== Адаптивные точки ===== */
+
+/* мобильные: плотнее, крупнее шрифты для удобного чтения (телефон) */
 @media (max-width: 600px) {
-  body {
-    font-size: 1.2rem;
-  }
+  :root { --card: #0b0b0b; }
+  html,body { font-size: 18px; }               /* увеличим базовый размер */
+  .logo { height: 32px; }
+  .site-title { font-size: 1.05rem; }
+  .container { padding: 12px; }
+  #ordersList { gap: 16px; }
+  .order { padding: 18px; border-radius: 10px; }
+  .order h3 { font-size: 1.2rem; }
+  .meta-row { font-size: 1rem; }
+  .order input, .order textarea, .btn { font-size: 1.05rem; padding: 12px; }
+}
 
-  .order {
-    padding: 24px;
+/* узкий десктоп / стандартный экран -> 2 колонки */
+@media (min-width: 900px) and (max-width: 1399px) {
+  #ordersList {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
   }
+  .container { max-width: 1100px; }
+  .order { padding: 20px; }
+}
 
-  input, select, textarea, button {
-    font-size: 1.1rem;
-    padding: 12px;
+/* очень широкий экран -> 3 колонки */
+@media (min-width: 1400px) {
+  #ordersList {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 26px;
   }
+  .container { max-width: 1400px; }
+  .order { padding: 22px; }
+}
+
+/* если нужно — верхняя полоса и центрирование шапки */
+@media (min-width: 700px) {
+  .logo-container { padding-left:12px; padding-right:12px; }
+}
+
+/* мелкие улучшения */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(108,45,199,0.15);
+  border-color: var(--accent);
 }
