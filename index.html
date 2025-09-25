@@ -19,8 +19,8 @@
       <h2>Add Order</h2>
       <form id="orderForm">
         <input name="brand" placeholder="Brand" required />
-        <input name="year" type="number" placeholder="Year" required />
-        <input name="mileage" type="number" placeholder="Mileage" required />
+        <input name="year" type="text" placeholder="Year" required />
+        <input name="mileage" type="text" placeholder="Mileage" required />
         <textarea name="description" placeholder="Description"></textarea>
         <button type="submit">Add</button>
       </form>
@@ -30,6 +30,14 @@
       <h2>Orders</h2>
       <div id="ordersList"></div>
     </section>
+  </div>
+
+  <!-- Lightbox container -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <button class="lightbox__close" aria-label="Close">×</button>
+    <button class="lightbox__prev" aria-label="Prev">‹</button>
+    <img class="lightbox__img" alt="preview" />
+    <button class="lightbox__next" aria-label="Next">›</button>
   </div>
 
   <script src="script.js"></script>
