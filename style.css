@@ -1,260 +1,154 @@
-/* ===== Elevador Avto — responsive theme (black + silver + purple accents) ===== */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
-
-* { box-sizing: border-box; }
-
-:root{
-  --bg:#000;
-  --card:#0f0f10;
-  --muted:#cfcfe0;
-  --accent:#6c2dc7; /* фиолетовый акцент */
-  --silver-start: #d6d6d6;
-  --silver-end: #a9a9a9;
-}
-
-html,body{
-  height:100%;
-  margin:0;
-  padding:0;
-  background: var(--bg);
-  color: #fff;
-  font-family: 'Montserrat', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  font-size: 16px; /* базовый размер (потом увеличиваем на телефоне) */
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-/* ===== Контейнер (центрирование содержимого) ===== */
-.container {
-  width: 95%;
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 18px 12px 40px;
-}
-
-/* ===== Шапка ===== */
+/* Шапка */
 .site-header {
-  background: transparent;
-  border-bottom: 2px solid rgba(108,45,199,0.18);
-  padding: 14px 0;
+  background: #000;
+  border-bottom: 2px solid #a855f7; /* фиолетовая линия */
+  padding: 12px 20px;
 }
 
 .logo-container {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  max-width:1240px;
-  margin:0 auto;
-  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .logo {
-  height: 44px;            /* уменьшил — не будет гигантским */
+  height: 40px;
   width: auto;
-  display:block;
-  image-rendering: optimizeQuality;
 }
 
-.site-title {
-  font-size: 1.25rem;
+.site-header h1 {
+  font-size: 24px;
   color: #fff;
+  margin: 0;
   font-weight: 700;
   letter-spacing: 1px;
 }
 
-/* ===== Сетка заявок ===== */
-#ordersList {
-  display: grid;
-  grid-template-columns: 1fr;       /* мобильная — 1 колонка */
-  gap: 22px;
-  margin-top: 20px;
-}
+/* Адаптив для мобил */
+@media (max-width: 768px) {
+  .logo-container {
+    justify-content: center;
+    text-align: center;
+  }
 
-/* ===== Карточка заявки ===== */
-.order {
-  background: var(--card);
-  border-radius: 12px;
-  padding: 18px;
-  border: 1.5px solid rgba(108,45,199,0.95); /* фиолетовая обводка */
-  box-shadow: 0 6px 18px rgba(108,45,199,0.06);
-  transition: transform .18s ease, box-shadow .18s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 120px;
+  .site-header h1 {
+    font-size: 20px;
+  }
 }
-
-.order:hover{
-  transform: translateY(-6px);
-  box-shadow: 0 12px 36px rgba(108,45,199,0.14);
-}
-
-/* заголовок заявки */
-.order h3 {
-  margin:0;
-  font-size: 1.12rem;
-  color: #ffffff;
-  line-height: 1.15;
-}
-
-/* мета-инфо */
-.meta-row {
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-/* описание */
-.order p {
+/* Общий стиль */
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #000;
+  color: #f0f0f0;
   margin: 0;
-  color: #d5d5d5;
-  font-size: 0.98rem;
+  padding: 0;
+  line-height: 1.6;
 }
 
-/* ответы */
-.replies-list {
-  list-style:none;
-  padding:0;
-  margin:0;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+h1, h2, h3 {
+  font-weight: 700;
+  color: #fff;
 }
 
-.replies-list li {
-  background:#121212;
-  border-left: 3px solid var(--accent);
-  padding:8px 10px;
-  border-radius:6px;
-  color:#ddd;
-  font-size:0.95rem;
+a {
+  color: #a855f7; /* фиолетовый */
+  text-decoration: none;
 }
 
-/* изображения в ответе */
-.order img {
-  max-width:100%;
-  height:auto;
-  border-radius:8px;
-  margin-top:8px;
-  display:block;
+a:hover {
+  text-decoration: underline;
 }
 
-/* ===== Формы в карточке ===== */
-.order form {
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin-top:6px;
+/* Контейнер */
+.container {
+  width: 95%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.order input[type="text"],
-.order input[type="number"],
-.order textarea,
-.order input[type="url"],
-.order select {
-  background:#151515;
-  border:1px solid #2a2a2a;
-  color:#fff;
-  padding:10px;
-  border-radius:8px;
-  font-size: 1rem;
+/* Карточка заявки */
+.order {
+  background: #111;
+  border: 1px solid #a855f7; /* фиолетовая обводка */
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
-/* кнопки: серебристые, но при hover — фиолетовые */
-.btn {
-  appearance:none;
-  -webkit-appearance:none;
+.order:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+}
+
+/* Формы */
+form {
+  margin-top: 15px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 14px;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #a855f7;
+  outline: none;
+  box-shadow: 0 0 6px #a855f7;
+}
+
+/* Кнопки */
+button {
+  background: linear-gradient(145deg, #d4d4d4, #a3a3a3); /* серебристый */
   border: none;
+  color: #000;
+  font-weight: bold;
+  padding: 10px 18px;
   border-radius: 10px;
-  padding: 10px 14px;
-  font-weight:700;
-  cursor:pointer;
-  background: linear-gradient(160deg, var(--silver-start), var(--silver-end));
-  color:#000;
-  transition: all .18s ease;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
 }
 
-.btn:hover {
-  background: linear-gradient(160deg, rgba(108,45,199,1), rgba(124,58,237,1));
-  color:#fff;
+button:hover {
+  background: linear-gradient(145deg, #a855f7, #7c3aed); /* фиолетовый при наведении */
+  color: #fff;
   transform: translateY(-2px);
 }
 
-/* спец-кнопки: удалить (красная) */
-.btn-danger {
-  background: linear-gradient(160deg, #e04b4b, #bf2b2b);
-  color:#fff;
+/* Список ответов */
+.order ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
 }
 
-.controls-row {
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
+.order ul li {
+  background: #1a1a1a;
+  border-left: 3px solid #a855f7;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
 }
 
-/* статус селект */
-.select-status {
-  background:#151515;
-  color:#fff;
-  border:1px solid #2a2a2a;
-  padding:8px 10px;
-  border-radius:8px;
-  font-weight:600;
-}
-
-/* ===== Футер-паддинг (чтобы контент не прилипал к низу) ===== */
-.site-footer {
-  height:40px;
-  margin-top: 28px;
-}
-
-/* ===== Адаптивные точки ===== */
-
-/* мобильные: плотнее, крупнее шрифты для удобного чтения (телефон) */
-@media (max-width: 600px) {
-  :root { --card: #0b0b0b; }
-  html,body { font-size: 18px; }               /* увеличим базовый размер */
-  .logo { height: 32px; }
-  .site-title { font-size: 1.05rem; }
-  .container { padding: 12px; }
-  #ordersList { gap: 16px; }
-  .order { padding: 18px; border-radius: 10px; }
-  .order h3 { font-size: 1.2rem; }
-  .meta-row { font-size: 1rem; }
-  .order input, .order textarea, .btn { font-size: 1.05rem; padding: 12px; }
-}
-
-/* узкий десктоп / стандартный экран -> 2 колонки */
-@media (min-width: 900px) and (max-width: 1399px) {
-  #ordersList {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 22px;
+/* Адаптив */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
   }
-  .container { max-width: 1100px; }
-  .order { padding: 20px; }
-}
 
-/* очень широкий экран -> 3 колонки */
-@media (min-width: 1400px) {
-  #ordersList {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 26px;
+  .order {
+    padding: 15px;
   }
-  .container { max-width: 1400px; }
-  .order { padding: 22px; }
-}
 
-/* если нужно — верхняя полоса и центрирование шапки */
-@media (min-width: 700px) {
-  .logo-container { padding-left:12px; padding-right:12px; }
-}
-
-/* мелкие улучшения */
-input:focus, textarea:focus, select:focus {
-  outline: none;
-  box-shadow: 0 0 8px rgba(108,45,199,0.15);
-  border-color: var(--accent);
+  input, select, textarea, button {
+    font-size: 16px;
+  }
 }
