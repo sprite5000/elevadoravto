@@ -82,6 +82,7 @@ a:hover {
   margin: 0 8px 20px;
   box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
   transition: transform 0.2s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
 .order:hover {
@@ -92,11 +93,11 @@ a:hover {
 /* Status indicator: left stripe only (keeps purple border and dark background) */
 .order.order--waiting {
   border-left-width: 6px;
-  border-left-color: #facc15; /* amber-400 */
+  border-left-color: #eab308; /* yellow-500 - complementary to purple */
 }
 .order.order--done {
   border-left-width: 6px;
-  border-left-color: #10b981; /* emerald-500 */
+  border-left-color: #22c55e; /* green-500 - harmonious with purple theme */
 }
 
 /* Формы */
@@ -154,6 +155,7 @@ button:hover {
   white-space: pre-wrap; /* keep user line breaks */
   overflow-wrap: anywhere; /* break long words/URLs if needed */
   word-break: break-word;
+  line-height: 1.5; /* better readability for multi-line text */
 }
 
 /* Simple horizontal carousel */
@@ -171,6 +173,7 @@ button:hover {
   width: auto;
   border-radius: 6px;
   flex: 0 0 auto;
+  cursor: zoom-in;
 }
 
 .reply__delete {
@@ -193,10 +196,83 @@ button:hover {
   background: #a855f7;
 }
 
+.order__delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+  cursor: pointer;
+  line-height: 24px;
+  text-align: center;
+  padding: 0;
+}
+
+.order__delete:hover {
+  background: #a855f7;
+}
+
 @media (max-width: 768px) {
   .carousel__img {
     height: 100px;
   }
+}
+
+/* Lightbox modal */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.lightbox.is-open { display: flex; }
+
+.lightbox__img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 8px;
+  box-shadow: 0 0 24px rgba(168,85,247,0.4);
+}
+
+.lightbox__close,
+.lightbox__prev,
+.lightbox__next {
+  position: absolute;
+  background: #a855f7;
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(168,85,247,0.45);
+  transition: transform .15s ease, background .15s ease, opacity .15s ease;
+  opacity: .95;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.lightbox__close { top: 16px; right: 16px; background: rgba(42,42,42,0.9); width: 40px; height: 40px; font-size: 22px; box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+.lightbox__prev { left: 16px; top: 50%; transform: translateY(-50%); }
+.lightbox__next { right: 16px; top: 50%; transform: translateY(-50%); }
+
+.lightbox__close:hover,
+.lightbox__prev:hover,
+.lightbox__next:hover { transform: translateY(-50%) scale(1.06); }
+.lightbox__close:hover { transform: none; background: #a855f7; }
+
+@media (max-width: 768px) {
+  .lightbox__prev, .lightbox__next { width: 56px; height: 56px; font-size: 30px; }
 }
 
 /* Make hit areas larger on touch */
