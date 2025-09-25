@@ -40,6 +40,20 @@
     <button class="lightbox__next" aria-label="Next">›</button>
   </div>
 
+  <!-- Reply modal -->
+  <div id="replyModal" class="replyModal" aria-hidden="true">
+    <div class="replyModal__content">
+      <button class="replyModal__close" aria-label="Close">×</button>
+      <h3>Add Reply</h3>
+      <form class="replyForm">
+        <textarea name="description" placeholder="Reply description" rows="4" required></textarea>
+        <input name="price" type="number" placeholder="Price" required />
+        <input name="images" type="file" accept="image/*" multiple />
+        <button type="submit">Reply</button>
+      </form>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
