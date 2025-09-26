@@ -90,6 +90,9 @@ async function loadOrders() {
   // Обработчики удаления заказа
   document.querySelectorAll(".order__delete").forEach(btn => {
     btn.addEventListener("click", async e => {
+      // Prevent multiple clicks
+      if (e.target.disabled) return;
+      
       const wrapper = e.target.closest('.order');
       // orderId хранится в DOM только внутри select и форм; возьмём из select
       const select = wrapper.querySelector('.statusSelect');
@@ -101,8 +104,21 @@ async function loadOrders() {
         alert("Wrong password. Order was not deleted.");
         return;
       }
-      await api(`/orders/${orderId}`, { method: "DELETE" });
-      loadOrders();
+      
+      // Disable button during deletion
+      e.target.disabled = true;
+      e.target.textContent = 'Deleting...';
+      
+      try {
+        await api(`/orders/${orderId}`, { method: "DELETE" });
+        loadOrders();
+      } catch (error) {
+        console.error('Error deleting order:', error);
+        alert('Error deleting order. Please try again.');
+        // Re-enable button on error
+        e.target.disabled = false;
+        e.target.textContent = '×';
+      }
     });
   });
 
@@ -110,6 +126,10 @@ async function loadOrders() {
   document.querySelectorAll(".reply__delete").forEach(btn => {
     btn.addEventListener("click", async e => {
       e.stopPropagation();
+      
+      // Prevent multiple clicks
+      if (e.target.disabled) return;
+      
       const wrapper = e.target.closest('.reply');
       const replyId = wrapper?.dataset?.replyId;
       if (!replyId) return;
@@ -120,8 +140,21 @@ async function loadOrders() {
         alert("Wrong password. Reply was not deleted.");
         return;
       }
-      await api(`/replies/${replyId}`, { method: "DELETE" });
-      loadOrders();
+      
+      // Disable button during deletion
+      e.target.disabled = true;
+      e.target.textContent = 'Deleting...';
+      
+      try {
+        await api(`/replies/${replyId}`, { method: "DELETE" });
+        loadOrders();
+      } catch (error) {
+        console.error('Error deleting reply:', error);
+        alert('Error deleting reply. Please try again.');
+        // Re-enable button on error
+        e.target.disabled = false;
+        e.target.textContent = '×';
+      }
     });
   });
 
@@ -206,15 +239,34 @@ async function loadOrders() {
 
   replyForm.addEventListener('submit', async e => {
     e.preventDefault();
+    
+    // Prevent multiple submissions
+    const submitBtn = replyForm.querySelector('button[type="submit"]');
+    if (submitBtn.disabled) return;
+    
     const orderId = replyForm.dataset.id;
     const fd = new FormData();
     fd.append("description", replyForm.description.value);
     fd.append("price", replyForm.price.value);
     const files = replyForm.images && replyForm.images.files ? Array.from(replyForm.images.files) : [];
     files.slice(0, 9).forEach(file => fd.append("images", file));
-    await api(`/orders/${orderId}/replies`, { method: "POST", body: fd });
-    closeReplyModal();
-    loadOrders();
+    
+    // Disable submit button and show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    
+    try {
+      await api(`/orders/${orderId}/replies`, { method: "POST", body: fd });
+      closeReplyModal();
+      loadOrders();
+    } catch (error) {
+      console.error('Error sending reply:', error);
+      alert('Error sending reply. Please try again.');
+    } finally {
+      // Re-enable submit button
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Reply';
+    }
   });
 
   window.addEventListener('keydown', e => {
@@ -227,6 +279,11 @@ async function loadOrders() {
 // ---------- New Order ----------
 document.getElementById("orderForm").addEventListener("submit", async e => {
   e.preventDefault();
+  
+  // Prevent multiple submissions
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  if (submitBtn.disabled) return;
+  
   const form = e.target;
   const body = {
     brand: form.brand.value,
@@ -234,9 +291,23 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
     mileage: form.mileage.value,
     description: form.description.value,
   };
-  await api("/orders", { method: "POST", body: JSON.stringify(body) });
-  form.reset();
-  loadOrders();
+  
+  // Disable submit button and show loading state
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Creating...';
+  
+  try {
+    await api("/orders", { method: "POST", body: JSON.stringify(body) });
+    form.reset();
+    loadOrders();
+  } catch (error) {
+    console.error('Error creating order:', error);
+    alert('Error creating order. Please try again.');
+  } finally {
+    // Re-enable submit button
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Add Order';
+  }
 });
 
 // Initial load
