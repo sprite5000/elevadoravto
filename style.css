@@ -175,6 +175,12 @@ button:hover {
   border-radius: 6px;
   flex: 0 0 auto;
   cursor: zoom-in;
+  transition: opacity 0.3s ease;
+  opacity: 0.7;
+}
+
+.carousel__img.loaded {
+  opacity: 1;
 }
 
 .reply__delete {
@@ -383,5 +389,57 @@ button:hover {
     max-width: 100%;
     height: auto;
     display: block;
+  }
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0;
+  padding: 20px 0;
+  flex-wrap: wrap;
+}
+
+.pagination__btn {
+  padding: 8px 12px;
+  border: 2px solid #8b5cf6;
+  background: white;
+  color: #8b5cf6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  min-width: 40px;
+}
+
+.pagination__btn:hover {
+  background: #8b5cf6;
+  color: white;
+}
+
+.pagination__btn--active {
+  background: #8b5cf6;
+  color: white;
+}
+
+.pagination__dots {
+  color: #666;
+  padding: 0 4px;
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    gap: 4px;
+    margin: 16px 0;
+    padding: 16px 0;
+  }
+  
+  .pagination__btn {
+    padding: 6px 10px;
+    font-size: 16px;
+    min-width: 36px;
   }
 }
