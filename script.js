@@ -3,6 +3,11 @@ const API_ORIGIN = API_URL.replace(/\/api\/?$/, "");
 const AUTH = "Basic " + btoa("admin:1234"); // логин:пароль
 const DELETE_PASSWORD = "1488"; // simple client-side guard for delete
 
+// Pagination settings
+const ORDERS_PER_PAGE = 20;
+let currentPage = 1;
+let allOrders = [];
+
 async function api(path, options = {}) {
   const isFormData = options && options.body && typeof FormData !== 'undefined' && options.body instanceof FormData;
   const headers = {
@@ -16,20 +21,36 @@ async function api(path, options = {}) {
   return res.json();
 }
 
-// ---------- Orders ----------
-async function loadOrders() {
-  let orders = await api("/orders");
-  // Sort: New (waiting) first, then Done
-  orders = orders.sort((a, b) => {
-    const weight = status => (status === "waiting" ? 0 : 1);
-    const dw = weight(a.status) - weight(b.status);
-    if (dw !== 0) return dw;
-    // fallback: newest first by created_at if available
-    if (a.created_at && b.created_at) {
-      return new Date(b.created_at) - new Date(a.created_at);
-    }
-    return 0;
-  });
+// ---------- Orders with Pagination ----------
+async function loadOrders(page = 1) {
+  // Load all orders only once, then paginate client-side
+  if (allOrders.length === 0) {
+    allOrders = await api("/orders");
+    // Sort: New (waiting) first, then Done
+    allOrders = allOrders.sort((a, b) => {
+      const weight = status => (status === "waiting" ? 0 : 1);
+      const dw = weight(a.status) - weight(b.status);
+      if (dw !== 0) return dw;
+      // fallback: newest first by created_at if available
+      if (a.created_at && b.created_at) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      }
+      return 0;
+    });
+  }
+
+  currentPage = page;
+  const totalPages = Math.ceil(allOrders.length / ORDERS_PER_PAGE);
+  const startIndex = (page - 1) * ORDERS_PER_PAGE;
+  const endIndex = startIndex + ORDERS_PER_PAGE;
+  const pageOrders = allOrders.slice(startIndex, endIndex);
+
+  renderOrders(pageOrders);
+  renderPagination(totalPages);
+  setupEventHandlers();
+}
+
+function renderOrders(orders) {
   const container = document.getElementById("ordersList");
   container.innerHTML = "";
 
@@ -61,7 +82,7 @@ async function loadOrders() {
               ${r.images.map(img => {
                 const src = (img.url || "");
                 const abs = src.startsWith("http") ? src : (API_ORIGIN + src);
-                return `<img src="${abs}" alt="reply image" class="carousel__img" data-src="${abs}" />`;
+                return `<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Y3ZjdmNyIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+TG9hZGluZy4uLjwvdGV4dD48L3N2Zz4=" alt="reply image" class="carousel__img" data-src="${abs}" loading="lazy" />`;
               }).join("")}
             </div>
           ` : ""}
@@ -73,7 +94,70 @@ async function loadOrders() {
 
     container.appendChild(div);
   });
+}
 
+function renderPagination(totalPages) {
+  let paginationContainer = document.getElementById("pagination");
+  if (!paginationContainer) {
+    paginationContainer = document.createElement("div");
+    paginationContainer.id = "pagination";
+    paginationContainer.className = "pagination";
+    document.querySelector(".container").appendChild(paginationContainer);
+  }
+
+  if (totalPages <= 1) {
+    paginationContainer.innerHTML = "";
+    return;
+  }
+
+  let paginationHTML = "";
+  
+  // Previous button
+  if (currentPage > 1) {
+    paginationHTML += `<button class="pagination__btn" data-page="${currentPage - 1}">‹ Previous</button>`;
+  }
+
+  // Page numbers
+  const startPage = Math.max(1, currentPage - 2);
+  const endPage = Math.min(totalPages, currentPage + 2);
+
+  if (startPage > 1) {
+    paginationHTML += `<button class="pagination__btn" data-page="1">1</button>`;
+    if (startPage > 2) {
+      paginationHTML += `<span class="pagination__dots">...</span>`;
+    }
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    const activeClass = i === currentPage ? "pagination__btn--active" : "";
+    paginationHTML += `<button class="pagination__btn ${activeClass}" data-page="${i}">${i}</button>`;
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      paginationHTML += `<span class="pagination__dots">...</span>`;
+    }
+    paginationHTML += `<button class="pagination__btn" data-page="${totalPages}">${totalPages}</button>`;
+  }
+
+  // Next button
+  if (currentPage < totalPages) {
+    paginationHTML += `<button class="pagination__btn" data-page="${currentPage + 1}">Next ›</button>`;
+  }
+
+  paginationContainer.innerHTML = paginationHTML;
+
+  // Add event listeners to pagination buttons
+  paginationContainer.querySelectorAll(".pagination__btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      const page = parseInt(e.target.dataset.page);
+      loadOrders(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+}
+
+function setupEventHandlers() {
   // Обработчики смены статуса
   document.querySelectorAll(".statusSelect").forEach(select => {
     select.addEventListener("change", async e => {
@@ -83,9 +167,13 @@ async function loadOrders() {
         method: "PATCH",
         body: JSON.stringify({ status: newStatus }),
       });
-      loadOrders();
+      // Refresh current page
+      loadOrders(currentPage);
     });
   });
+
+  // Setup lazy loading for new carousels on this page
+  setupLazyLoading();
 
   // Обработчики удаления заказа
   document.querySelectorAll(".order__delete").forEach(btn => {
@@ -111,7 +199,9 @@ async function loadOrders() {
       
       try {
         await api(`/orders/${orderId}`, { method: "DELETE" });
-        loadOrders();
+        // Remove from allOrders array and refresh current page
+        allOrders = allOrders.filter(order => order.id !== orderId);
+        loadOrders(currentPage);
       } catch (error) {
         console.error('Error deleting order:', error);
         alert('Error deleting order. Please try again.');
@@ -147,7 +237,8 @@ async function loadOrders() {
       
       try {
         await api(`/replies/${replyId}`, { method: "DELETE" });
-        loadOrders();
+        // Refresh current page
+      loadOrders(currentPage);
       } catch (error) {
         console.error('Error deleting reply:', error);
         alert('Error deleting reply. Please try again.');
@@ -166,52 +257,6 @@ async function loadOrders() {
     });
   });
 
-  // Lightbox handlers
-  const lightbox = document.getElementById('lightbox');
-  const lbImg = lightbox.querySelector('.lightbox__img');
-  const lbClose = lightbox.querySelector('.lightbox__close');
-  const lbPrev = lightbox.querySelector('.lightbox__prev');
-  const lbNext = lightbox.querySelector('.lightbox__next');
-
-  let gallery = [];
-  let index = 0;
-
-  function openLightbox(images, startIdx) {
-    gallery = images;
-    index = startIdx;
-    lbImg.src = gallery[index];
-    lightbox.classList.add('is-open');
-    lightbox.setAttribute('aria-hidden', 'false');
-  }
-  function closeLightbox() {
-    lightbox.classList.remove('is-open');
-    lightbox.setAttribute('aria-hidden', 'true');
-    lbImg.src = '';
-  }
-  function show(delta) {
-    if (!gallery.length) return;
-    index = (index + delta + gallery.length) % gallery.length;
-    lbImg.src = gallery[index];
-  }
-
-  document.querySelectorAll('.carousel').forEach(carousel => {
-    const imgs = Array.from(carousel.querySelectorAll('.carousel__img'));
-    const urls = imgs.map(img => img.dataset.src || img.src);
-    imgs.forEach((img, i) => {
-      img.addEventListener('click', () => openLightbox(urls, i));
-    });
-  });
-
-  lbClose.addEventListener('click', closeLightbox);
-  lbPrev.addEventListener('click', () => show(-1));
-  lbNext.addEventListener('click', () => show(1));
-  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
-  window.addEventListener('keydown', e => {
-    if (!lightbox.classList.contains('is-open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') show(-1);
-    if (e.key === 'ArrowRight') show(1);
-  });
 
   // Reply modal functions
   function openReplyModal(orderId) {
@@ -258,7 +303,9 @@ async function loadOrders() {
     try {
       await api(`/orders/${orderId}/replies`, { method: "POST", body: fd });
       closeReplyModal();
-      loadOrders();
+      // Reset cache and reload current page
+      allOrders = [];
+      loadOrders(currentPage);
     } catch (error) {
       console.error('Error sending reply:', error);
       alert('Error sending reply. Please try again.');
@@ -273,6 +320,91 @@ async function loadOrders() {
     if (e.key === 'Escape' && replyModal.classList.contains('is-open')) {
       closeReplyModal();
     }
+  });
+}
+
+// Global lightbox variables
+let gallery = [];
+let index = 0;
+
+function setupLightbox() {
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = lightbox.querySelector('.lightbox__img');
+  const lbClose = lightbox.querySelector('.lightbox__close');
+  const lbPrev = lightbox.querySelector('.lightbox__prev');
+  const lbNext = lightbox.querySelector('.lightbox__next');
+
+  // Make functions global
+  window.openLightbox = function(images, startIdx) {
+    gallery = images;
+    index = startIdx;
+    lbImg.src = gallery[index];
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+  };
+
+  window.closeLightbox = function() {
+    lightbox.classList.remove('is-open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lbImg.src = '';
+  };
+
+  window.show = function(delta) {
+    if (!gallery.length) return;
+    index = (index + delta + gallery.length) % gallery.length;
+    lbImg.src = gallery[index];
+  };
+
+  lbClose.addEventListener('click', closeLightbox);
+  lbPrev.addEventListener('click', () => show(-1));
+  lbNext.addEventListener('click', () => show(1));
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+  window.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('is-open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') show(-1);
+    if (e.key === 'ArrowRight') show(1);
+  });
+}
+
+function setupLazyLoading() {
+  // Lazy loading function
+  function loadImage(img) {
+    if (img.dataset.src && img.src !== img.dataset.src) {
+      img.src = img.dataset.src;
+      img.classList.add('loaded');
+    }
+  }
+
+  // Load all images in a carousel
+  function loadCarouselImages(carousel) {
+    const imgs = Array.from(carousel.querySelectorAll('.carousel__img'));
+    imgs.forEach(loadImage);
+  }
+
+  document.querySelectorAll('.carousel').forEach(carousel => {
+    const imgs = Array.from(carousel.querySelectorAll('.carousel__img'));
+    const urls = imgs.map(img => img.dataset.src || img.src);
+    
+    imgs.forEach((img, i) => {
+      img.addEventListener('click', () => {
+        // Load all images in this carousel when user clicks on any image
+        loadCarouselImages(carousel);
+        openLightbox(urls, i);
+      });
+    });
+
+    // Load images when carousel comes into view (Intersection Observer)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadCarouselImages(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '50px' });
+    
+    observer.observe(carousel);
   });
 }
 
@@ -299,7 +431,9 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
   try {
     await api("/orders", { method: "POST", body: JSON.stringify(body) });
     form.reset();
-    loadOrders();
+    // Reset cache and reload first page
+    allOrders = [];
+    loadOrders(1);
   } catch (error) {
     console.error('Error creating order:', error);
     alert('Error creating order. Please try again.');
@@ -310,5 +444,8 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
   }
 });
 
+// Initial setup
+setupLightbox();
+
 // Initial load
-loadOrders();
+loadOrders(1);
