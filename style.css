@@ -481,7 +481,8 @@ button:hover {
   margin-bottom: 1rem;
 }
 .login-logo {
-  max-width: 300px; /* Размер логотипа */
+  width: 300px; /* <--- Прямо задаем ширину, заставляем растянуться */
+  max-width: 100%; /* Чтобы на мобилках не вылезало за экран */
   height: auto;
   display: inline-block;
 }
