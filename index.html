@@ -55,11 +55,24 @@
   </div>
   <div id="loginOverlay" class="login-overlay">
   <form id="loginForm" class="login-form">
-    <h2>Вход в систему</h2>
-    <input type="text" id="usernameInput" placeholder="Логин (admin, partner1...)" required autofocus>
-    <input type="password" id="passwordInput" placeholder="Пароль" required>
-    <button type="submit">Войти</button>
-    <p id="loginError" style="color: red; display: none;">Неверный логин или пароль</p>
+    
+    <div class="login-header">
+      <img src="https://placehold.co/150x50/333/FFF?text=LOGO" alt="Logo" class="login-logo">
+    </div>
+
+    <div class="form-group">
+      <label for="usernameInput">Логин</label>
+      <input type="text" id="usernameInput" placeholder="Введите логин" required autofocus autocomplete="username">
+    </div>
+
+    <div class="form-group">
+      <label for="passwordInput">Пароль</label>
+      <input type="password" id="passwordInput" placeholder="Введите пароль" required autocomplete="current-password">
+    </div>
+
+    <button type="submit" class="login-btn">Войти</button>
+    
+    <p id="loginError" class="login-error">Неверный логин или пароль</p>
   </form>
 </div>
   <script src="script.js"></script>
