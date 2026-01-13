@@ -1,6 +1,6 @@
 const API_URL = "https://orders-api.supbot777.workers.dev/api"; // твой воркер
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, "");
-const AUTH = "Basic " + btoa("admin:1234"); // логин:пароль
+let currentAuth = localStorage.getItem("auth_header"); // Пытаемся вспомнить вход
 const DELETE_PASSWORD = "1488"; // simple client-side guard for delete
 
 // Pagination settings
@@ -8,16 +8,36 @@ const ORDERS_PER_PAGE = 20;
 let currentPage = 1;
 let allOrders = [];
 
+
+
 async function api(path, options = {}) {
+  // Если мы еще не вошли — стоп
+  if (!currentAuth) {
+    showLoginScreen();
+    throw new Error("Нужен вход");
+  }
+
   const isFormData = options && options.body && typeof FormData !== 'undefined' && options.body instanceof FormData;
   const headers = {
-    "Authorization": AUTH,
+    "Authorization": currentAuth, // ИСПОЛЬЗУЕМ ПЕРЕМЕННУЮ
     ...(options.headers || {}),
   };
+  
   if (!isFormData) {
     headers["Content-Type"] = headers["Content-Type"] || "application/json";
   }
+
   const res = await fetch(API_URL + path, { ...options, headers });
+
+  // ГЛАВНОЕ: Если сервер ответил 401 (Unauthorized)
+  if (res.status === 401) {
+    localStorage.removeItem("auth_header"); // Забываем пароль
+    currentAuth = null;
+    showLoginScreen(); // Показываем окно входа снова
+    document.getElementById("loginError").style.display = "block"; // Показываем ошибку
+    throw new Error("Неверный пароль");
+  }
+
   return res.json();
 }
 
@@ -407,7 +427,62 @@ function setupLazyLoading() {
     observer.observe(carousel);
   });
 }
+// --- ЛОГИКА ВХОДА ---
 
+const loginOverlay = document.getElementById("loginOverlay");
+const loginForm = document.getElementById("loginForm");
+
+function showLoginScreen() {
+  loginOverlay.classList.remove("hidden");
+}
+
+function hideLoginScreen() {
+  loginOverlay.classList.add("hidden");
+}
+
+// Обработка формы входа
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const user = document.getElementById("usernameInput").value.trim();
+  const pass = document.getElementById("passwordInput").value.trim();
+
+  // Создаем заголовок Basic Auth
+  const token = "Basic " + btoa(user + ":" + pass);
+
+  // Пытаемся сделать тестовый запрос, чтобы проверить пароль
+  try {
+    // Временно сохраняем для проверки
+    currentAuth = token;
+    
+    // Делаем легкий запрос (например, получить заказы)
+    await api("/orders"); // Если пароль неверный, api() выбросит ошибку 401
+
+    // Если мы тут — значит пароль подошел!
+    localStorage.setItem("auth_header", token); // Запоминаем навсегда
+    document.getElementById("loginError").style.display = "none";
+    hideLoginScreen();
+    
+    // Запускаем приложение
+    allOrders = []; // Сброс кэша
+    loadOrders(1); 
+    
+  } catch (err) {
+    console.error("Ошибка входа:", err);
+    // api() само покажет ошибку, но на всякий случай сбросим
+    currentAuth = null; 
+  }
+});
+
+// --- СТАРТ ПРИЛОЖЕНИЯ ---
+
+// Проверяем, вошли ли мы ранее
+if (currentAuth) {
+  hideLoginScreen();
+  loadOrders(1);
+} else {
+  showLoginScreen();
+  // Не загружаем заказы, пока юзер не войдет
+}
 // ---------- New Order ----------
 document.getElementById("orderForm").addEventListener("submit", async e => {
   e.preventDefault();
