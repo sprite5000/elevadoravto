@@ -444,32 +444,103 @@ button:hover {
   }
 }
 /* Экран, перекрывающий весь сайт */
+/* Фон на весь экран */
 .login-overlay {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: #f0f2f5;
+  /* Темный фон (почти черный) */
+  background-color: #09090b; 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Поверх всего */
+  z-index: 9999;
+  backdrop-filter: blur(5px); /* Размытие фона, если там что-то просвечивает */
 }
 
-/* Скрываем экран, когда вошли */
 .login-overlay.hidden {
   display: none;
 }
 
+/* Карточка формы */
 .login-form {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  /* Чуть светлее фона страницы */
+  background-color: #18181b; 
+  border: 1px solid #27272a;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: 300px;
+  gap: 1.2rem;
+  width: 100%;
+  max-width: 360px; /* Чтобы на телефоне не распирало */
 }
-.login-form input, .login-form button {
-  padding: 10px;
+/* Логотип */
+.login-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.login-logo {
+  max-width: 150px; /* Размер логотипа */
+  height: auto;
+  display: inline-block;
+}
+
+/* Группы полей */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Подписи (label) */
+.login-form label {
+  color: #a1a1aa; /* Светло-серый текст */
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* Поля ввода */
+.login-form input {
+  background-color: #27272a; /* Темно-серый фон поля */
+  border: 1px solid #3f3f46;
+  color: #ffffff; /* Белый текст */
+  padding: 12px 16px;
+  border-radius: 8px;
   font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.login-form input:focus {
+  border-color: #3b82f6; /* Синяя обводка при нажатии */
+  background-color: #27272a;
+}
+
+/* Кнопка */
+.login-btn {
+  margin-top: 10px;
+  background-color: #ffffff; /* Белая кнопка (контраст) */
+  color: #000000;
+  font-weight: 600;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: opacity 0.2s;
+}
+
+.login-btn:hover {
+  opacity: 0.9;
+}
+
+/* Ошибка */
+.login-error {
+  color: #ef4444; /* Красный текст */
+  text-align: center;
+  font-size: 0.9rem;
+  margin: 0;
+  display: none; /* Скрыто по умолчанию */
 }
