@@ -53,7 +53,15 @@
       </form>
     </div>
   </div>
-
+  <div id="loginOverlay" class="login-overlay">
+  <form id="loginForm" class="login-form">
+    <h2>Вход в систему</h2>
+    <input type="text" id="usernameInput" placeholder="Логин (admin, partner1...)" required autofocus>
+    <input type="password" id="passwordInput" placeholder="Пароль" required>
+    <button type="submit">Войти</button>
+    <p id="loginError" style="color: red; display: none;">Неверный логин или пароль</p>
+  </form>
+</div>
   <script src="script.js"></script>
 </body>
 </html>
