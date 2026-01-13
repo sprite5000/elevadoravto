@@ -481,7 +481,7 @@ button:hover {
   margin-bottom: 1rem;
 }
 .login-logo {
-  max-width: 150px; /* Размер логотипа */
+  max-width: 300px; /* Размер логотипа */
   height: auto;
   display: inline-block;
 }
