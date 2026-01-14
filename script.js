@@ -192,6 +192,32 @@ function setupEventHandlers() {
     });
   });
 
+  function updateInterfaceForRole() {
+  const token = localStorage.getItem("auth_header");
+  
+  // ИЩЕМ ТВОЮ СЕКЦИЮ ПО ID
+  const adminSection = document.getElementById("new-order"); 
+  
+  if (!token || !adminSection) return;
+
+  try {
+    const base64Url = token.split(" ")[1];
+    const decoded = atob(base64Url);
+    const username = decoded.split(":")[0];
+
+    // Если админ — показываем твою секцию
+    if (username === "admin") {
+      adminSection.style.display = "block";
+    } else {
+      adminSection.style.display = "none";
+    }
+    
+  } catch (e) {
+    console.error("Ошибка проверки роли:", e);
+    adminSection.style.display = "none";
+  }
+}
+  
   // Setup lazy loading for new carousels on this page
   setupLazyLoading();
 
@@ -461,7 +487,8 @@ loginForm.addEventListener("submit", async e => {
     localStorage.setItem("auth_header", token); // Запоминаем навсегда
     document.getElementById("loginError").style.display = "none";
     hideLoginScreen();
-    
+
+    updateInterfaceForRole();
     // Запускаем приложение
     allOrders = []; // Сброс кэша
     loadOrders(1); 
@@ -478,6 +505,7 @@ loginForm.addEventListener("submit", async e => {
 // Проверяем, вошли ли мы ранее
 if (currentAuth) {
   hideLoginScreen();
+  updateInterfaceForRole();
   loadOrders(1);
 } else {
   showLoginScreen();
