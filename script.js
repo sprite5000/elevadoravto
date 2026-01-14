@@ -103,9 +103,19 @@ function renderOrders(orders) {
     const statusClass = order.status === "waiting" ? "order--waiting" : "order--done";
     div.className = `order ${statusClass}`;
 
+    // --- ЛОГИКА ДЛЯ БЕЙДЖИКА ---
+    let ownerBadge = "";
+    if (order.owner) {
+      // Берем первую букву и делаем большой
+      const letter = order.owner.charAt(0).toUpperCase();
+      // Генерируем HTML кружочка
+      ownerBadge = `<span class="owner-badge" title="${order.owner}">${letter}</span>`;
+    }
+    // ---------------------------
+    
     div.innerHTML = `
       <button class="order__delete" title="Delete order" aria-label="Delete order">×</button>
-      <h3>#${order.id} ${order.brand} (${order.year}) — ${order.mileage} km</h3>
+      <h3>${ownerBadge}#${order.id} ${order.brand} (${order.year}) — ${order.mileage} km</h3>
       <p>${order.description}</p>
 
       <label>
