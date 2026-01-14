@@ -69,7 +69,31 @@ async function loadOrders(page = 1) {
   renderPagination(totalPages);
   setupEventHandlers();
 }
+function updateInterfaceForRole() {
+  const token = localStorage.getItem("auth_header");
+  
+  // ИЩЕМ ТВОЮ СЕКЦИЮ ПО ID
+  const adminSection = document.getElementById("new-order"); 
+  
+  if (!token || !adminSection) return;
 
+  try {
+    const base64Url = token.split(" ")[1];
+    const decoded = atob(base64Url);
+    const username = decoded.split(":")[0];
+
+    // Если админ — показываем твою секцию
+    if (username === "admin") {
+      adminSection.style.display = "block";
+    } else {
+      adminSection.style.display = "none";
+    }
+    
+  } catch (e) {
+    console.error("Ошибка проверки роли:", e);
+    adminSection.style.display = "none";
+  }
+}
 function renderOrders(orders) {
   const container = document.getElementById("ordersList");
   container.innerHTML = "";
@@ -192,31 +216,7 @@ function setupEventHandlers() {
     });
   });
 
-  function updateInterfaceForRole() {
-  const token = localStorage.getItem("auth_header");
   
-  // ИЩЕМ ТВОЮ СЕКЦИЮ ПО ID
-  const adminSection = document.getElementById("new-order"); 
-  
-  if (!token || !adminSection) return;
-
-  try {
-    const base64Url = token.split(" ")[1];
-    const decoded = atob(base64Url);
-    const username = decoded.split(":")[0];
-
-    // Если админ — показываем твою секцию
-    if (username === "admin") {
-      adminSection.style.display = "block";
-    } else {
-      adminSection.style.display = "none";
-    }
-    
-  } catch (e) {
-    console.error("Ошибка проверки роли:", e);
-    adminSection.style.display = "none";
-  }
-}
   
   // Setup lazy loading for new carousels on this page
   setupLazyLoading();
