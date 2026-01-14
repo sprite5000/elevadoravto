@@ -525,6 +525,7 @@ document.getElementById("orderForm").addEventListener("submit", async e => {
     year: form.year.value,
     mileage: form.mileage.value,
     description: form.description.value,
+    owner: form.owner.value,
   };
   
   // Disable submit button and show loading state
