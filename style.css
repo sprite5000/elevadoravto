@@ -545,3 +545,23 @@ button:hover {
   margin: 0;
   display: none; /* Скрыто по умолчанию */
 }
+/* Бейджик с первой буквой имени */
+.owner-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  width: 24px;       /* Маленький размер */
+  height: 24px;
+  border-radius: 50%; /* Делаем круглым */
+  
+  background-color: #3b82f6; /* Синий фон (можно любой) */
+  color: white;      /* Белая буква */
+  
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 8px; /* Отступ от номера заказа */
+  vertical-align: middle; /* Выравнивание по центру строки */
+  
+  text-transform: uppercase;
+}
